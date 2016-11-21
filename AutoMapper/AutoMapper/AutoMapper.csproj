@@ -40,8 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contracts\Models\IMappingPair.cs" />
     <Compile Include="Contracts\Services\IMapper.cs" />
+    <Compile Include="Contracts\Services\IFunctionFactory.cs" />
+    <Compile Include="Models\MappingPair.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\FunctionFactory.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
