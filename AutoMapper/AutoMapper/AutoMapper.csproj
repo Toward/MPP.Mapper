@@ -45,7 +45,10 @@
     <Compile Include="Contracts\Services\IFunctionFactory.cs" />
     <Compile Include="Models\MappingPair.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AutoMapper.cs" />
     <Compile Include="Services\FunctionFactory.cs" />
+    <Compile Include="Services\MapperConfiguration.cs" />
+    <Compile Include="Services\TypeConvertionTable.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
