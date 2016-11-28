@@ -7,13 +7,16 @@ using AutoMapper.Contracts.Services;
 
 namespace AutoMapper.Services
 {
-    internal class FunctionFactory : IFunctionFactory
+    internal class LambdaFactory : ILambdaFactory
     {
         #region Internal Methods
 
-        public Func<TSource, TDestination> CreateFunction<TSource, TDestination>(IEnumerable<IMappingPair> mappingPropertiesPair)
+        public Expression<Func<TSource, TDestination>> CreateFunction<TSource, TDestination>(IEnumerable<IMappingPair> mappingPropertiesPair)
             where TDestination : new()
         {
+            if(mappingPropertiesPair == null)
+                throw new ArgumentNullException(nameof(mappingPropertiesPair));
+
             var parameter = Expression.Parameter(typeof(TSource), "source");
             var assignments = mappingPropertiesPair.Select( propertyPair =>
             {
@@ -23,7 +26,7 @@ namespace AutoMapper.Services
             });
 
             var body = Expression.MemberInit(Expression.New(typeof(TDestination)), assignments);
-            return Expression.Lambda<Func<TSource, TDestination>>(body, parameter).Compile();
+            return Expression.Lambda<Func<TSource, TDestination>>(body, parameter);
         }
 
         #endregion

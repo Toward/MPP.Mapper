@@ -11,7 +11,7 @@ namespace AutoMapper.Services
     {
         #region Private Methods
 
-        private readonly IFunctionFactory _functionFactory = new FunctionFactory();
+        private readonly ILambdaFactory _functionFactory = new LambdaFactory();
         private readonly MapperConfiguration _mapperConfiguration;
 
         #endregion
@@ -30,8 +30,9 @@ namespace AutoMapper.Services
         public TDestination Map<TSource, TDestination>(TSource source) where TDestination : new()
         {
             var propertyPairs = GetProperties(typeof(TSource), typeof(TDestination));
-            var mappingFunction = _functionFactory.CreateFunction<TSource, TDestination>(propertyPairs);
-            return mappingFunction(source);
+            var lambda = _functionFactory.CreateFunction<TSource, TDestination>(propertyPairs);
+            var function = lambda.Compile();
+            return function(source);
         }
 
         #endregion
