@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using AutoMapper.Contracts.Models;
 using AutoMapper.Models;
 using AutoMapper.Services;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace AutoMapper.UnitTests
@@ -16,7 +18,7 @@ namespace AutoMapper.UnitTests
         {
             var cache = CreateCache();
 
-            Assert.Catch<ArgumentNullException>(() => cache.Add<Source,Destination>(null,null));
+            Assert.Catch<ArgumentNullException>(() => cache.Add<Source, Destination>(null));
         }
 
         [Test]
@@ -27,10 +29,10 @@ namespace AutoMapper.UnitTests
             var expectedKey = CreateTypePair();
             var expectedLambda = CreateFunction();
 
-            cache.Add(expectedKey,expectedLambda);
-                          
+            cache.Add(expectedLambda);
+
             Assert.IsTrue(cache.Cache.ContainsKey(expectedKey));
-            Assert.AreEqual(cache.Cache[expectedKey],expectedLambda);
+            Assert.AreEqual(cache.Cache[expectedKey], expectedLambda);
         }
 
         [Test]
@@ -40,7 +42,7 @@ namespace AutoMapper.UnitTests
             cache.Cache = CreateDictionary();
             var key = CreateTypePair();
 
-            Assert.IsFalse(cache.Contains(key));
+            Assert.IsFalse(cache.Contains<Source,Destination>());
         }
 
         [Test]
@@ -49,9 +51,8 @@ namespace AutoMapper.UnitTests
             var cache = CreateCache();
             var expectedLambda = CreateFunction();
             cache.Cache = CreateDictionary(expectedLambda);
-            var key = CreateTypePair();
 
-            Assert.IsTrue(cache.Contains(key));
+            Assert.IsTrue(cache.Contains<Source,Destination>());
         }
 
         [Test]
@@ -59,9 +60,8 @@ namespace AutoMapper.UnitTests
         {
             var cache = CreateCache();
             cache.Cache = CreateDictionary();
-            var key = CreateTypePair();
 
-            var function = cache.GetValue<Source, Destination>(key);
+            var function = cache.GetValue<Source, Destination>();
 
             Assert.Null(function);
         }
@@ -72,11 +72,10 @@ namespace AutoMapper.UnitTests
             var cache = CreateCache();
             var expectedLambda = CreateFunction();
             cache.Cache = CreateDictionary(expectedLambda);
-            var key = CreateTypePair();
 
-            var function = cache.GetValue<Source, Destination>(key);
+            var function = cache.GetValue<Source, Destination>();
 
-            Assert.AreEqual(expectedLambda,function);
+            Assert.AreEqual(expectedLambda, function);
         }
 
         #endregion
@@ -88,16 +87,20 @@ namespace AutoMapper.UnitTests
             return new FunctionCache();
         }
 
-        private Dictionary<TypePair, Delegate> CreateDictionary(Func<Source,Destination> function = null)
+        private Dictionary<TypePair, Delegate> CreateDictionary(Func<Source, Destination> function = null)
         {
             var dictionary = new Dictionary<TypePair, Delegate>();
             if (function != null)
-                dictionary.Add(CreateTypePair(),function);
+                dictionary.Add(CreateTypePair(), function);
             return dictionary;
         }
 
         private TypePair CreateTypePair()
         {
+            //var typePair = Substitute.For<ITypePair>();
+            //typePair.SourceType = typeof(Source);
+            //typePair.DestinationType = typeof(Destination);
+            //return typePair;
             return new TypePair(typeof(Source), typeof(Destination));
         }
 

@@ -58,9 +58,9 @@ namespace AutoMapper.UnitTests
             var configuration = CreateConfiguration();
             configuration.ConfigDictionary = CreateDictionary();
 
-            var mappingPair = configuration.GetMappingPair(typeof(Source).GetProperty("SecondProperty"));
+            var destinationProperty = configuration.GetDestinationProperty(typeof(Source).GetProperty("SecondProperty"));
 
-            Assert.Null(mappingPair);
+            Assert.Null(destinationProperty);
         }
 
         [Test]
@@ -71,15 +71,14 @@ namespace AutoMapper.UnitTests
             var expectedSourceProperty = typeof(Source).GetProperty("FirstProperty");
             var expectedDestinationProperty = typeof(Destination).GetProperty("ThirdProperty");
 
-            var mappingPair = configuration.GetMappingPair(expectedSourceProperty);
+            var destinationProperty = configuration.GetDestinationProperty(expectedSourceProperty);
 
-            Assert.AreEqual(mappingPair.SourceProperty,expectedSourceProperty);
-            Assert.AreEqual(mappingPair.DestinationProperty,expectedDestinationProperty);
+            Assert.AreEqual(destinationProperty, expectedDestinationProperty);
         }
 
         #endregion
 
-        #region Factories for tests
+        #region Factory methods
 
         private MapperConfiguration CreateConfiguration()
         {

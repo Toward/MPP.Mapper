@@ -8,7 +8,7 @@ namespace AutoMapper.Models
         public Type SourceType { get; set; }
         public Type DestinationType { get; set; }
 
-        public TypePair(Type sourceType,Type destinationType)
+        internal TypePair(Type sourceType,Type destinationType)
         {
             SourceType = sourceType;
             DestinationType = destinationType;
@@ -20,13 +20,8 @@ namespace AutoMapper.Models
                 return false;
             if (obj == this)
                 return true;
-            var pair = obj as TypePair;
-            return pair != null && Equals(pair);
-        }
-
-        protected bool Equals(ITypePair other)
-        {
-            return SourceType == other.SourceType && DestinationType == other.DestinationType;
+            var typePair = obj as TypePair;
+            return typePair != null && Equals(typePair);
         }
 
         public override int GetHashCode()
@@ -35,6 +30,11 @@ namespace AutoMapper.Models
             {
                 return ((SourceType != null ? SourceType.GetHashCode() : 0) * 397) ^ (DestinationType != null ? DestinationType.GetHashCode() : 0);
             }
+        }
+
+        protected bool Equals(ITypePair other)
+        {
+            return SourceType == other.SourceType && DestinationType == other.DestinationType;
         }
     }
 }

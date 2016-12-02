@@ -5,9 +5,9 @@ using System.Linq.Expressions;
 
 namespace AutoMapper.Contracts.Services
 {
-    internal interface ILambdaFactory
+    internal interface IExpressionFactory
     {
-        Expression<Func<TSource, TDestination>> CreateFunction <TSource,TDestination>(IEnumerable<IMappingPair> mappingPropertiesPair) 
+        Expression<Func<TSource, TDestination>> CreateExpression <TSource,TDestination>(IEnumerable<IMappingPair> mappingPropertiesPair) 
             where TDestination: new();
     }
 }

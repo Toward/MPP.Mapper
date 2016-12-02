@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using AutoMapper.Contracts.Models;
+using System.Reflection;
+using AutoMapper.Contracts.Services;
 using AutoMapper.Services;
 using NSubstitute;
 using NUnit.Framework;
@@ -14,48 +13,74 @@ namespace AutoMapper.UnitTests
         #region Tests
 
         [Test]
-        public void CreateFunction_ByDefault_ReturnsNewFunction()
+        public void Map_WithoutConfiguration_ReturnNewMappingObject()
         {
-            var mappingPairs = CreateMappingPairs();
-            var factory = CreateFactory();
+            var functionFactory = CreateFactory();
+            var source = CreateSource();
+            var expectedObject = CreateDestination(true);
 
-            var result = factory.CreateFunction<Source, Destination>(mappingPairs);
+            var mappingFunction = functionFactory.CreateFunction<Source, Destination>();
 
-            var paramName = result.Parameters[0].Name;
-            var paramType = result.Parameters[0].Type;
-            var body = (MemberInitExpression)result.Body;
-            var destinationType = body.Type;
-            var destinationPropertyName = body.Bindings[0].Member.Name;
-            var operand = ((UnaryExpression)((MemberAssignment)body.Bindings[0]).Expression).Operand;
-            var sourcePropertyName = ((MemberExpression) operand).Member.Name;
-
-            Assert.AreEqual(paramName, "source");
-            Assert.AreEqual(paramType, typeof(Source));
-            Assert.AreEqual(destinationType, typeof(Destination));
-            Assert.AreEqual(destinationPropertyName, "ThirdProperty");
-            Assert.AreEqual(sourcePropertyName, "FirstProperty");
+            Assert.AreEqual(mappingFunction(source), expectedObject);
         }
 
         [Test]
-        public void CreateFunction_NullParameter_ThrownException()
+        public void Map_WithConfiguration_ReturnNewMappingObject()
         {
-            var factory = CreateFactory();
+            var configuration = CreateConfiguration();
+            var functionFactory = CreateFactory(configuration);
+            var source = CreateSource();
+            var expectedObject = CreateDestination(false);
 
-            Assert.Catch<ArgumentNullException>(() => factory.CreateFunction<Source, Destination>(null));
+            var mappingFunction = functionFactory.CreateFunction<Source, Destination>();
+
+            Assert.AreEqual(mappingFunction(source), expectedObject);
         }
 
         #endregion
 
-        #region Factories for tests
 
-        private LambdaFactory CreateFactory() => new LambdaFactory();
+        #region Factories
 
-        private IEnumerable<IMappingPair> CreateMappingPairs()
+        private FunctionFactory CreateFactory(IMapperConfiguration configuration = null)
         {
-            var mappingPair = Substitute.For<IMappingPair>();
-            mappingPair.SourceProperty = typeof(Source).GetProperty("FirstProperty");
-            mappingPair.DestinationProperty = typeof(Destination).GetProperty("ThirdProperty");
-            return new[] { mappingPair };
+            return new FunctionFactory(configuration);
+        }
+
+        private IMapperConfiguration CreateConfiguration()
+        {
+            var configuration = Substitute.For<IMapperConfiguration>();
+            configuration
+                .GetDestinationProperty(typeof(Source).GetProperty("FirstProperty"))
+                .Returns(typeof(Destination).GetProperty("ThirdProperty"));
+            return configuration;
+        }
+
+        private Source CreateSource()
+        {
+            return new Source
+            {
+                FirstProperty = 1000,
+                SecondProperty = "Snow",
+                ThirdProperty = 10.201,
+                FourthProperty = 1
+            };
+        }
+
+        private Destination CreateDestination(bool withoutConfig)
+        {
+            var source = CreateSource();
+            return (withoutConfig)
+                ? new Destination
+                {
+                    FirstProperty = source.FirstProperty,
+                    SecondProperty = source.SecondProperty
+                }
+                : new Destination
+                {
+                    ThirdProperty = source.FirstProperty,
+                    SecondProperty = source.SecondProperty
+                };
         }
 
         #endregion

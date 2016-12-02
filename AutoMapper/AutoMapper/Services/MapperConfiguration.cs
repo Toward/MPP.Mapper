@@ -3,21 +3,31 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using AutoMapper.Contracts.Models;
+using AutoMapper.Contracts.Services;
 using AutoMapper.Models;
 
 namespace AutoMapper.Services
 {
-    public class MapperConfiguration
+    public class MapperConfiguration: IMapperConfiguration
     {
         #region Private Members
 
-        private readonly Dictionary<PropertyInfo,PropertyInfo> _configDictionary = new Dictionary<PropertyInfo, PropertyInfo>();
+        internal Dictionary<PropertyInfo, PropertyInfo> ConfigDictionary { get; set; }
+
+        #endregion
+
+        #region Ctor
+
+        public MapperConfiguration()
+        {
+            ConfigDictionary = new Dictionary<PropertyInfo, PropertyInfo>();
+        }
 
         #endregion
 
         #region Public Methods
 
-        public MapperConfiguration Register<TSource, TDestination>(Expression<Func<TSource, object>> sourceAccessor,
+        public IMapperConfiguration Register<TSource, TDestination>(Expression<Func<TSource, object>> sourceAccessor,
             Expression<Func<TDestination, object>> destinationAccessor)
         {
             if (sourceAccessor == null)
@@ -30,34 +40,29 @@ namespace AutoMapper.Services
 
             if (!destinationProperty.CanWrite)
                 throw new ArgumentException("Destination property doesn't have setter.");
-            if (!TypeConvertionTable.CanConvertWithoutDataLoss(sourceProperty.PropertyType, destinationProperty.PropertyType))
+            if (!TypeConvertionTable.CanConvertWithoutDataLoss(new TypePair(sourceProperty.PropertyType, destinationProperty.PropertyType)))
                 throw new ArgumentException("Incompatible types.");
 
-            if (!_configDictionary.ContainsKey(sourceProperty))
+            if (!ConfigDictionary.ContainsKey(sourceProperty))
             {
-                _configDictionary.Add(sourceProperty, destinationProperty);
+                ConfigDictionary.Add(sourceProperty, destinationProperty);
             }
             else
             {
-                _configDictionary[sourceProperty] = destinationProperty;
+                ConfigDictionary[sourceProperty] = destinationProperty;
             }
 
             return this;
         }
 
-        #endregion
-
-        #region Internal Methods
-
-        internal IMappingPair GetMappingPair(PropertyInfo sourcePropertyInfo)
+        public PropertyInfo GetDestinationProperty(PropertyInfo sourcePropertyInfo)
         {
-            PropertyInfo destinationPropertyInfo;
-            return (_configDictionary.TryGetValue(sourcePropertyInfo, out destinationPropertyInfo))
-                ? new MappingPair()
-                    {
-                        SourceProperty = sourcePropertyInfo,
-                        DestinationProperty = destinationPropertyInfo
-                    }
+            if (sourcePropertyInfo == null)
+                throw new ArgumentNullException(nameof(sourcePropertyInfo));
+
+            PropertyInfo result;
+            return (ConfigDictionary.TryGetValue(sourcePropertyInfo, out result))
+                ? result
                 : null;
         }
 
@@ -67,7 +72,7 @@ namespace AutoMapper.Services
 
         private PropertyInfo GetPropertyInfo<TSource, TPropertyType>(Expression<Func<TSource, TPropertyType>> propertyAccessor)
         {
-            var propertyAccessExpression = propertyAccessor.Body as MemberExpression;
+            var propertyAccessExpression = ((UnaryExpression)propertyAccessor.Body).Operand as MemberExpression;
             if (propertyAccessExpression == null)
                 throw new ArgumentException("Expression doesn't represent property accessor.");
             

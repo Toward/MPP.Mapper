@@ -7,11 +7,11 @@ using AutoMapper.Contracts.Services;
 
 namespace AutoMapper.Services
 {
-    internal class LambdaFactory : ILambdaFactory
+    internal class ExpressionFactory : IExpressionFactory
     {
         #region Internal Methods
 
-        public Expression<Func<TSource, TDestination>> CreateFunction<TSource, TDestination>(IEnumerable<IMappingPair> mappingPropertiesPair)
+        public Expression<Func<TSource, TDestination>> CreateExpression<TSource, TDestination>(IEnumerable<IMappingPair> mappingPropertiesPair)
             where TDestination : new()
         {
             if(mappingPropertiesPair == null)

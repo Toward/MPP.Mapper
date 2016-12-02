@@ -41,16 +41,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\Models\IMappingPair.cs" />
+    <Compile Include="Contracts\Models\ITypePair.cs" />
+    <Compile Include="Contracts\Services\IMapperConfiguration.cs" />
+    <Compile Include="Contracts\Services\IExpressionFactory.cs" />
     <Compile Include="Contracts\Services\IFunctionCache.cs" />
+    <Compile Include="Contracts\Services\IFunctionFactory.cs" />
     <Compile Include="Contracts\Services\IMapper.cs" />
-    <Compile Include="Contracts\Services\ILambdaFactory.cs" />
+    <Compile Include="Services\Mapper.cs" />
     <Compile Include="Models\MappingPair.cs" />
+    <Compile Include="Models\TypePair.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\AutoMapper.cs" />
     <Compile Include="Services\FunctionCache.cs" />
-    <Compile Include="Services\LambdaFactory.cs" />
+    <Compile Include="Services\ExpressionFactory.cs" />
+    <Compile Include="Services\FunctionFactory.cs" />
+    <Compile Include="Services\FunctionFactoryWithCaching.cs" />
     <Compile Include="Services\MapperConfiguration.cs" />
-    <Compile Include="Services\MapperWithCaching.cs" />
     <Compile Include="Services\TypeConvertionTable.cs" />
   </ItemGroup>
   <ItemGroup />
