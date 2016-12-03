@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AutoMapper.Contracts.Models;
 
 namespace AutoMapper.Services
 {
@@ -107,14 +106,17 @@ namespace AutoMapper.Services
 
         #region Internal Methods
 
-        internal static bool CanConvertWithoutDataLoss(ITypePair typePair)
+        internal static bool CanConvertWithoutDataLoss(Type sourceType, Type destinationType)
         {
-            if (typePair == null)
-                throw new ArgumentNullException(nameof(typePair));
-            var typesEquals = typePair.SourceType == typePair.DestinationType;
-            return (!typesEquals && typePair.SourceType.IsPrimitive && 
-                typePair.DestinationType.IsPrimitive && ConvertionTable.ContainsKey(typePair.SourceType))
-                ? ConvertionTable[typePair.SourceType].Contains(typePair.DestinationType)
+            if (sourceType == null)
+                throw new ArgumentNullException(nameof(sourceType));
+            if (destinationType == null)
+                throw new ArgumentNullException(nameof(destinationType));
+
+            var typesEquals = sourceType == destinationType;
+            return (!typesEquals && sourceType.IsPrimitive && destinationType.IsPrimitive &&
+                ConvertionTable.ContainsKey(sourceType))
+                ? ConvertionTable[sourceType].Contains(destinationType)
                 : typesEquals;
         }
 

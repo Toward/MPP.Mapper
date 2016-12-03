@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AutoMapper.Contracts.Models;
 using AutoMapper.Contracts.Services;
 using AutoMapper.Models;
 
@@ -16,7 +15,7 @@ namespace AutoMapper.Services
 
         #region Ctor
 
-        public FunctionCache()
+        internal FunctionCache()
         {
             Cache = new Dictionary<TypePair, Delegate>();
         }
@@ -27,10 +26,10 @@ namespace AutoMapper.Services
 
         public void Add<TSource, TDestination>(Func<TSource, TDestination> cachingFunction)
         {
-            if(cachingFunction == null)
-                throw new ArgumentNullException();
+            if (cachingFunction == null)
+                throw new ArgumentNullException(nameof(cachingFunction));
 
-            Cache.Add(new TypePair(typeof(TSource),typeof(TDestination)), cachingFunction);
+            Cache.Add(new TypePair(typeof(TSource), typeof(TDestination)), cachingFunction);
         }
 
         public bool Contains<TSource, TDestination>()
@@ -42,7 +41,7 @@ namespace AutoMapper.Services
         {
             var typePair = new TypePair(typeof(TSource), typeof(TDestination));
             return (Cache.ContainsKey(typePair))
-                ? (Func<TSource,TDestination>)Cache[typePair]
+                ? (Func<TSource, TDestination>)Cache[typePair]
                 : null;
         }
 

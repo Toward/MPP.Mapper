@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AutoMapper.UnitTests
+namespace AutoMapper.UnitTests.Helpers
 {
     internal sealed class Destination
     {
@@ -22,7 +22,11 @@ namespace AutoMapper.UnitTests
 
         private bool Equals(Destination other)
         {
-            return FirstProperty == other.FirstProperty && string.Equals(SecondProperty, other.SecondProperty) && ThirdProperty.Equals(other.ThirdProperty) && FourthProperty.Equals(other.FourthProperty) && FieldWithoutSetter == other.FieldWithoutSetter;
+            return FirstProperty == other.FirstProperty &&
+                string.Equals(SecondProperty, other.SecondProperty) &&
+                ThirdProperty.Equals(other.ThirdProperty) &&
+                FourthProperty.Equals(other.FourthProperty) &&
+                FieldWithoutSetter == other.FieldWithoutSetter;
         }
 
         public override int GetHashCode()
@@ -30,10 +34,10 @@ namespace AutoMapper.UnitTests
             unchecked
             {
                 var hashCode = FirstProperty.GetHashCode();
-                hashCode = (hashCode*397) ^ (SecondProperty?.GetHashCode() ?? 0);
-                hashCode = (hashCode*397) ^ ThirdProperty.GetHashCode();
-                hashCode = (hashCode*397) ^ FourthProperty.GetHashCode();
-                hashCode = (hashCode*397) ^ FieldWithoutSetter;
+                hashCode = (hashCode * 397) ^ (SecondProperty?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ ThirdProperty.GetHashCode();
+                hashCode = (hashCode * 397) ^ FourthProperty.GetHashCode();
+                hashCode = (hashCode * 397) ^ FieldWithoutSetter;
                 return hashCode;
             }
         }

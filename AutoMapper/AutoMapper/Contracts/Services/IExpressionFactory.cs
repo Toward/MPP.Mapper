@@ -7,7 +7,7 @@ namespace AutoMapper.Contracts.Services
 {
     internal interface IExpressionFactory
     {
-        Expression<Func<TSource, TDestination>> CreateExpression <TSource,TDestination>(IEnumerable<IMappingPair> mappingPropertiesPair) 
-            where TDestination: new();
+        Expression<Func<TSource, TDestination>> CreateExpression<TSource, TDestination>(IEnumerable<IMappingPair> mappingPropertiesPair)
+            where TDestination : new();
     }
 }

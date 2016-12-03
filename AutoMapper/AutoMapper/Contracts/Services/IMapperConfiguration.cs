@@ -8,7 +8,6 @@ namespace AutoMapper.Contracts.Services
     {
         IMapperConfiguration Register<TSource, TDestination>(Expression<Func<TSource, object>> sourceAccessor,
             Expression<Func<TDestination, object>> destinationAccessor);
-
         PropertyInfo GetDestinationProperty(PropertyInfo sourcePropertyInfo);
     }
 }

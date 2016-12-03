@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using AutoMapper.Contracts.Models;
 using AutoMapper.Contracts.Services;
-using AutoMapper.Models;
 
 namespace AutoMapper.Services
 {
     public class MapperConfiguration: IMapperConfiguration
     {
-        #region Private Members
+        #region Internal Members
 
         internal Dictionary<PropertyInfo, PropertyInfo> ConfigDictionary { get; set; }
 
@@ -40,7 +38,7 @@ namespace AutoMapper.Services
 
             if (!destinationProperty.CanWrite)
                 throw new ArgumentException("Destination property doesn't have setter.");
-            if (!TypeConvertionTable.CanConvertWithoutDataLoss(new TypePair(sourceProperty.PropertyType, destinationProperty.PropertyType)))
+            if (!TypeConvertionTable.CanConvertWithoutDataLoss(sourceProperty.PropertyType, destinationProperty.PropertyType))
                 throw new ArgumentException("Incompatible types.");
 
             if (!ConfigDictionary.ContainsKey(sourceProperty))

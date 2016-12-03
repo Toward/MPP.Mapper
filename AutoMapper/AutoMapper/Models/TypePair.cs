@@ -3,12 +3,12 @@ using AutoMapper.Contracts.Models;
 
 namespace AutoMapper.Models
 {
-    internal class TypePair: ITypePair
+    internal class TypePair : ITypePair
     {
         public Type SourceType { get; set; }
         public Type DestinationType { get; set; }
 
-        internal TypePair(Type sourceType,Type destinationType)
+        internal TypePair(Type sourceType, Type destinationType)
         {
             SourceType = sourceType;
             DestinationType = destinationType;
@@ -28,7 +28,8 @@ namespace AutoMapper.Models
         {
             unchecked
             {
-                return ((SourceType != null ? SourceType.GetHashCode() : 0) * 397) ^ (DestinationType != null ? DestinationType.GetHashCode() : 0);
+                return ((SourceType != null ? SourceType.GetHashCode() : 0) * 397) ^
+                    (DestinationType != null ? DestinationType.GetHashCode() : 0);
             }
         }
 

@@ -1,20 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using AutoMapper.Services;
+using AutoMapper.UnitTests.Helpers;
 using NUnit.Framework;
 
-namespace AutoMapper.UnitTests
+namespace AutoMapper.UnitTests.Tests
 {
     [TestFixture]
     public class MapperConfigurationTests
     {
+        #region Private Members
+
+        private readonly AbstractFactory<Source, Destination> _testsFactory = new TestsFactory();
+
+        #endregion
+
         #region Tests
 
         [Test]
         public void Register_ByDefault_AddToDictionary()
         {
-            var configuration = CreateConfiguration();
+            var configuration = _testsFactory.CreateConfiguration();
             var expectedDictionaryKey = typeof(Source).GetProperty("FirstProperty");
             var expectedDictionaryValue = typeof(Destination).GetProperty("ThirdProperty");
 
@@ -27,7 +32,7 @@ namespace AutoMapper.UnitTests
         [Test]
         public void Register_NullParameters_ThrownArgumentNullException()
         {
-            var configuration = CreateConfiguration();
+            var configuration = _testsFactory.CreateConfiguration();
 
             Assert.Catch<ArgumentNullException>(() => configuration.Register<Source, Destination>(null, null));
         }
@@ -35,7 +40,7 @@ namespace AutoMapper.UnitTests
         [Test]
         public void Register_NotConvertibleTypes_ThrownArgumentException()
         {
-            var configuration = CreateConfiguration();
+            var configuration = _testsFactory.CreateConfiguration();
 
             var exception = Assert.Catch<ArgumentException>(() => configuration.Register<Source, Destination>(source => source.FirstProperty, destination => destination.FourthProperty));
 
@@ -45,7 +50,7 @@ namespace AutoMapper.UnitTests
         [Test]
         public void Register_ReadonlyDestinationProperty_ThrownArgumentException()
         {
-            var configuration = CreateConfiguration();
+            var configuration = _testsFactory.CreateConfiguration();
 
             var exception = Assert.Catch<ArgumentException>(() => configuration.Register<Source, Destination>(source => source.FirstProperty, destination => destination.FieldWithoutSetter));
 
@@ -55,8 +60,7 @@ namespace AutoMapper.UnitTests
         [Test]
         public void GetMappingPair_NotContainedInDictionary_ReturnNull()
         {
-            var configuration = CreateConfiguration();
-            configuration.ConfigDictionary = CreateDictionary();
+            var configuration = _testsFactory.CreateConfiguration();
 
             var destinationProperty = configuration.GetDestinationProperty(typeof(Source).GetProperty("SecondProperty"));
 
@@ -66,10 +70,12 @@ namespace AutoMapper.UnitTests
         [Test]
         public void GetMappingPair_ContainedInDictionary_ReturnNull()
         {
-            var configuration = CreateConfiguration();
-            configuration.ConfigDictionary = CreateDictionary();
-            var expectedSourceProperty = typeof(Source).GetProperty("FirstProperty");
-            var expectedDestinationProperty = typeof(Destination).GetProperty("ThirdProperty");
+            var configuration = _testsFactory.CreateConfiguration();
+            var expectedSourceProperty = GetProperty<Source>("FirstProperty");
+            var expectedDestinationProperty = GetProperty<Destination>("ThirdProperty");
+
+            configuration.ConfigDictionary.Add(expectedSourceProperty, expectedDestinationProperty);
+
 
             var destinationProperty = configuration.GetDestinationProperty(expectedSourceProperty);
 
@@ -78,19 +84,11 @@ namespace AutoMapper.UnitTests
 
         #endregion
 
-        #region Factory methods
+        #region Private Methods
 
-        private MapperConfiguration CreateConfiguration()
+        private PropertyInfo GetProperty<T>(string name)
         {
-            return new MapperConfiguration();
-        }
-
-        private Dictionary<PropertyInfo, PropertyInfo> CreateDictionary()
-        {
-            var dictionary = new Dictionary<PropertyInfo, PropertyInfo>();
-            dictionary.Add(typeof(Source).GetProperty("FirstProperty"),
-                typeof(Destination).GetProperty("ThirdProperty"));
-            return dictionary;
+            return typeof(T).GetProperty(name);
         }
 
         #endregion

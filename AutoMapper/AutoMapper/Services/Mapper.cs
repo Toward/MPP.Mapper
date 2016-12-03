@@ -3,9 +3,9 @@ using AutoMapper.Contracts.Services;
 
 namespace AutoMapper.Services
 {
-    public class Mapper: IMapper
+    public class Mapper : IMapper
     {
-        #region Public Methods
+        #region Public Members
 
         public IFunctionFactory Factory { get; set; }
 
@@ -19,6 +19,9 @@ namespace AutoMapper.Services
         }
 
         #endregion
+
+        #region Public Methods
+
         public TDestination Map<TSource, TDestination>(TSource source) where TDestination : new()
         {
             if (source == null)
@@ -27,5 +30,7 @@ namespace AutoMapper.Services
             var function = Factory.CreateFunction<TSource, TDestination>();
             return function(source);
         }
+
+        #endregion
     }
 }

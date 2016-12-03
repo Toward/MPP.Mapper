@@ -7,7 +7,7 @@ using AutoMapper.Models;
 
 namespace AutoMapper.Services
 {
-    internal class FunctionFactory: IFunctionFactory
+    internal class FunctionFactory : IFunctionFactory
     {
         #region Private Members
 
@@ -16,10 +16,14 @@ namespace AutoMapper.Services
 
         #endregion
 
+        #region Ctor
+
         internal FunctionFactory(IMapperConfiguration mapperConfiguration = null)
         {
             _mapperConfiguration = mapperConfiguration ?? new MapperConfiguration();
         }
+
+        #endregion
 
         #region Public Methods
 
@@ -34,7 +38,6 @@ namespace AutoMapper.Services
 
         #region Private Methods
 
-        //TODO refactor
         private IEnumerable<IMappingPair> GetProperties(Type sourceType, Type destinationType)
         {
             var sourceProperties = sourceType.GetProperties();
@@ -44,29 +47,18 @@ namespace AutoMapper.Services
             {
                 var destinationProperty = _mapperConfiguration.GetDestinationProperty(sourceProperty);
 
-                if (destinationProperty != null)
-                {
-                    result.Add(new MappingPair
-                    {
-                        SourceProperty = sourceProperty,
-                        DestinationProperty = destinationProperty
-                    });
-                }
-                else
+                if (destinationProperty == null)
                 {
                     destinationProperty = destinationProperties.
                         FirstOrDefault(propertyInfo => propertyInfo.Name == sourceProperty.Name);
                     if (destinationProperty != null && destinationProperty.CanWrite &&
-                        TypeConvertionTable.CanConvertWithoutDataLoss(new TypePair(sourceProperty.PropertyType, destinationProperty.PropertyType)))
-                    {
-                        result.Add(new MappingPair()
-                        {
-                            SourceProperty = sourceProperty,
-                            DestinationProperty = destinationProperty
-                        });
-                    }
+                        TypeConvertionTable.CanConvertWithoutDataLoss(sourceProperty.PropertyType, destinationProperty.PropertyType))
+                        result.Add(new MappingPair(sourceProperty, destinationProperty));
                 }
-
+                else
+                {
+                    result.Add(new MappingPair(sourceProperty, destinationProperty));
+                }
             }
             return result;
         }

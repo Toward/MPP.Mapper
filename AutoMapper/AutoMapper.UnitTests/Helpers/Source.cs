@@ -1,4 +1,4 @@
-﻿namespace AutoMapper.UnitTests
+﻿namespace AutoMapper.UnitTests.Helpers
 {
     internal sealed class Source
     {
